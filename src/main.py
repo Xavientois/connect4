@@ -30,7 +30,7 @@ signal.signal(signal.SIGINT, signal_handler)
 # b2_player = Player('b',n_b2)
 
 tournament=None
-self_play_batch_size=10000
+self_play_batch_size=5000
 benchmark_batch_size=10
 training_rounds=1000
 mirroring=False
@@ -40,7 +40,7 @@ def get_exploration_factor(game_number):
     return 0.1
 
 def log(msg):
-    with open('../log.txt', 'a') as f:
+    with open('./log.txt', 'a') as f:
         f.write(msg + '\n')
 
 # for round in range(0,training_rounds):
@@ -76,7 +76,7 @@ def self_play_group(count):
 
     for round in range(1,training_rounds):
         print('Benchmarking before round', round)
-
+        stats = []
         for benchmark in [MctsStrategy(1000)]:
             for network in networks:
                 ns = NnStrategy(network, mirroring)
@@ -85,11 +85,19 @@ def self_play_group(count):
                 tournament = Tournament(benchmark_batch_size, [p1, p2])
                 results = tournament.run(False)
                 print('Results for {} vs {}: {}\n'.format(benchmark.get_name(), ns.get_name(), results))
-                log('{},{}:{},{}:{}'.format((round-1) * self_play_batch_size, ns.get_name(), results.get('N', 0), benchmark.get_name(),results.get('B', 0)))
+                stats.append('{},{}:{},{}:{}'.format(ns.get_total_games_trained(), ns.get_name(), results.get('N', 0), benchmark.get_name(), results.get('B', 0)))
 
         for p1,p2 in itertools.combinations(players,2):
             tournament = Tournament(self_play_batch_size, [p1, p2])
-            tournament.run(True)
+            tournament.run(False, training=True)
+
+        print("\nSaving data... Please don't exit yet.")
+        for stat in stats:
+            log(stat)
+
+        for player in players:
+            player.strategy.save()
+        print("Save complete!")
 
         print('- - - - - - - - - -')
 

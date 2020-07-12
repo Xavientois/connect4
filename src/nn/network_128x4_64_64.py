@@ -27,8 +27,8 @@ class NetworkB(Network):
 
         super().__init__(model)
 
-    def get_save_file(self):
-        return 'model_128-4_64_64_B{}.h5'.format(self.id)
+    def get_save_file(self, extension='h5'):
+        return 'model_128-4_64_64_B{}.{}'.format(self.id, extension)
 
     def get_name(self):
         return 'B' + str(self.id)

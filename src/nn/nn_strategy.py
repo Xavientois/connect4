@@ -60,11 +60,17 @@ class NnStrategy(Strategy):
 
         self.current_game_moves = []
 
+    def completed_training_game(self):
+        self.network.completed_training_game()
+
     def save(self):
         self.network.save()
 
     def get_name(self):
         return self.network.get_name()
+
+    def get_total_games_trained(self):
+        return self.network.total_games_trained
 
     def _build_board_state(self, game, player_id):
         bs = list([list([1 if v == player_id else 0 if v == Board.EMPTY_CELL else -1 for v in row]) for row in game.board.board])
