@@ -75,7 +75,8 @@ def self_play_group(count):
     players = [Player('B' + str(i), s) for i,s in enumerate(strategies)]
 
     for round in range(1,training_rounds):
-        print('Benchmarking before round', round)
+        print('\n================== Round {} =================='.format(round))
+        print('---- Benchmarking ----')
         stats = []
         for benchmark in [MctsStrategy(1000)]:
             for network in networks:
@@ -87,19 +88,18 @@ def self_play_group(count):
                 print('Results for {} vs {}: {}\n'.format(benchmark.get_name(), ns.get_name(), results))
                 stats.append('{},{}:{},{}:{}'.format(ns.get_total_games_trained(), ns.get_name(), results.get('N', 0), benchmark.get_name(), results.get('B', 0)))
 
+        print('---- Training ----')
         for p1,p2 in itertools.combinations(players,2):
             tournament = Tournament(self_play_batch_size, [p1, p2])
             tournament.run(False, training=True)
 
-        print("\nSaving data... Please don't exit yet.")
+        print('\n---- Saving ----')
         for stat in stats:
             log(stat)
 
         for player in players:
             player.strategy.save()
         print("Save complete!")
-
-        print('- - - - - - - - - -')
 
 
 # self_play_group(3)
