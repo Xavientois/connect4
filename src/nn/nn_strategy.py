@@ -49,7 +49,7 @@ class NnStrategy(Strategy):
             self.current_batch_board_states.append(board_state)
             self.current_batch_rewards.append(reward)
             if self.mirroring:
-                self.current_batch_board_states.append(_reverse_board_state(board_state))
+                self.current_batch_board_states.append(self._reverse_board_state(board_state))
                 self.current_batch_rewards.append(reward)
             reward *= self.discount_factor
 
@@ -71,5 +71,5 @@ class NnStrategy(Strategy):
 
         return bs
 
-    def _reverse_board_state(board_state):
+    def _reverse_board_state(self, board_state):
         return [row[::-1] for row in board_state]
