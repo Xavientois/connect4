@@ -7,7 +7,7 @@ def no_exploration(g):
 
 class NnStrategy(Strategy):
 
-    def __init__(self, network, get_exploration_factor=no_exploration):
+    def __init__(self, network, mirroring=False, get_exploration_factor=no_exploration):
         self.discount_factor = 0.9
         self.get_exploration_factor = get_exploration_factor
         self.current_game_moves = []
@@ -15,6 +15,7 @@ class NnStrategy(Strategy):
         self.current_batch_board_states = []
         self.current_batch_rewards = []
         self.batch_size = 100
+        self.mirroring = mirroring
 
     def move(self, game, player_id):
         move_scores = {}
@@ -47,6 +48,9 @@ class NnStrategy(Strategy):
         for board_state, move in reversed(self.current_game_moves):
             self.current_batch_board_states.append(board_state)
             self.current_batch_rewards.append(reward)
+            if self.mirroring:
+                self.current_batch_board_states.append(_reverse_board_state(board_state))
+                self.current_batch_rewards.append(reward)
             reward *= self.discount_factor
 
         if len(self.current_batch_rewards) >= self.batch_size:
@@ -66,3 +70,6 @@ class NnStrategy(Strategy):
         bs = list([list([1 if v == player_id else 0 if v == Board.EMPTY_CELL else -1 for v in row]) for row in game.board.board])
 
         return bs
+
+    def _reverse_board_state(board_state):
+        return [row[::-1] for row in board_state]

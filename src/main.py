@@ -33,6 +33,7 @@ tournament=None
 self_play_batch_size=10000
 benchmark_batch_size=10
 training_rounds=1000
+mirroring=False
 
 def get_exploration_factor(game_number):
     # return 0.1 * math.pow(1 - 0.000002, game_number)
@@ -70,7 +71,7 @@ def log(msg):
 def self_play_group(count):
     global tournament
     networks = [NetworkB(i+1) for i in range(count)]
-    strategies = [NnStrategy(n, get_exploration_factor) for n in networks]
+    strategies = [NnStrategy(n, mirroring, get_exploration_factor) for n in networks]
     players = [Player('B' + str(i), s) for i,s in enumerate(strategies)]
 
     for round in range(1,training_rounds):
@@ -78,7 +79,7 @@ def self_play_group(count):
 
         for benchmark in [MctsStrategy(1000)]:
             for network in networks:
-                ns = NnStrategy(network)
+                ns = NnStrategy(network, mirroring)
                 p1 = Player('N', ns)
                 p2 = Player('B', benchmark)
                 tournament = Tournament(benchmark_batch_size, [p1, p2])
@@ -96,7 +97,7 @@ def self_play_group(count):
 # self_play_group(3)
 
 def test_ensemble():
-    p1 = Player('N', NnStrategy(NetworkBEnsemble('N')))
+    p1 = Player('N', NnStrategy(NetworkBEnsemble('N'), mirroring))
     p2 = Player('X', MctsStrategy(1000))
     tournament = Tournament(100, [p2, p1])
     result = tournament.run(False)
