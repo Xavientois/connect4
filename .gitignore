@@ -3,7 +3,8 @@
 .venv
 *.pyc
 *.h5
-*.txt
 *.csv
 *.old
 *.backup
+
+log.txt
