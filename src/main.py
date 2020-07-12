@@ -13,13 +13,6 @@ from player import Player
 import signal, sys, itertools
 import math
 
-def signal_handler(sig, frame):
-    tournament.close()
-    sys.exit(0)
-
-signal.signal(signal.SIGINT, signal_handler)
-
-
 # networks = [NetworkA(), NetworkB(), NetworkC(), NetworkD()]
 # benchmark_strategies = [RandomStrategy(), MctsStrategy(10), MctsStrategy(50), MctsStrategy(250)]#, MctsStrategy(1000)]
 # networks = [NetworkB()]
@@ -96,11 +89,9 @@ def self_play_group(count):
         print('\n---- Saving ----')
         for stat in stats:
             log(stat)
-
         for player in players:
             player.strategy.save()
         print("Save complete!")
-
 
 # self_play_group(3)
 
