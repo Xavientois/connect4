@@ -1,6 +1,7 @@
 from board import Board
 from random import random, choice
 from strategy import Strategy
+import time
 
 def no_exploration(g):
     return 0
@@ -11,6 +12,7 @@ class NnStrategy(Strategy):
         self.discount_factor = 0.9
         self.get_exploration_factor = get_exploration_factor
         self.current_game_moves = []
+        self.current_game_think_time = 0.0
         self.network = network
         self.current_batch_board_states = []
         self.current_batch_rewards = []
@@ -18,6 +20,7 @@ class NnStrategy(Strategy):
         self.mirroring = mirroring
 
     def move(self, game, player_id):
+        start_time = time.time()
         move_scores = {}
 
         valid_moves = game.board.get_valid_moves()
@@ -41,10 +44,11 @@ class NnStrategy(Strategy):
             board_state = move_scores[move_to_play][1]
 
         self.current_game_moves.append((board_state, move_to_play))
+        self.current_game_think_time += (time.time() - start_time)
 
         return move_to_play
 
-    def game_over(self, reward):
+    def game_over(self, reward, training=False):
         for board_state, move in reversed(self.current_game_moves):
             self.current_batch_board_states.append(board_state)
             self.current_batch_rewards.append(reward)
@@ -58,10 +62,11 @@ class NnStrategy(Strategy):
             self.current_batch_board_states = []
             self.current_batch_rewards = []
 
-        self.current_game_moves = []
+        if training:
+            self.network.training_game_over(self.current_game_think_time)
 
-    def completed_training_game(self):
-        self.network.completed_training_game()
+        self.current_game_think_time = 0.0
+        self.current_game_moves = []
 
     def save(self):
         self.network.save()
@@ -71,6 +76,9 @@ class NnStrategy(Strategy):
 
     def get_total_games_trained(self):
         return self.network.total_games_trained
+
+    def get_average_game_think_time(self):
+        return self.network.average_think_time
 
     def _build_board_state(self, game, player_id):
         bs = list([list([1 if v == player_id else 0 if v == Board.EMPTY_CELL else -1 for v in row]) for row in game.board.board])

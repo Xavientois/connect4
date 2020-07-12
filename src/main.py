@@ -79,7 +79,14 @@ def self_play_group(count):
                 tournament = Tournament(benchmark_batch_size, [p1, p2])
                 results = tournament.run(False)
                 print('Results for {} vs {}: {}\n'.format(benchmark.get_name(), ns.get_name(), results))
-                stats.append('{},{}:{},{}:{}'.format(ns.get_total_games_trained(), ns.get_name(), results.get('N', 0), benchmark.get_name(), results.get('B', 0)))
+                stats.append('{},{},{}:{},{}:{}'.format(
+                    ns.get_total_games_trained(),
+                    ns.get_average_game_think_time(),
+                    ns.get_name(),
+                    results.get('N', 0),
+                    benchmark.get_name(),
+                    results.get('B', 0)
+                ))
 
         print('---- Training ----')
         for p1,p2 in itertools.combinations(players,2):

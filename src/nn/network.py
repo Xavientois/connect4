@@ -11,6 +11,7 @@ class Network(ABC):
     def __init__(self, model):
         self.model = model
         self.total_games_trained = 0
+        self.average_think_time = 0.0
         self.load()
 
     def eval_position(self, board_state):
@@ -34,8 +35,9 @@ class Network(ABC):
         if os.path.isfile(data_path):
             print(('Loaded data from', data_path))
             with open(data_path, 'r') as infile:
-                data = infile.read()
-                self.total_games_trained = int(json.loads(data)['total_games_trained'])
+                data = json.loads(infile.read())
+                self.total_games_trained = int(data['total_games_trained'])
+                self.average_think_time = float(data['average_think_time'])
 
     def save(self):
         if not os.path.isdir(saved_model_dir):
@@ -47,16 +49,27 @@ class Network(ABC):
             os.makedirs(saved_data_dir)
         data_path = os.path.join(saved_data_dir, self.get_save_file(extension='json'))
         with open(data_path, 'w') as outfile:
-            json.dump({ 'total_games_trained': self.total_games_trained }, outfile)
+            json.dump(self._persisting_json_data(), outfile)
 
-    def completed_training_game(self):
+    def training_game_over(self, think_time):
         self.total_games_trained += 1
+        if self.total_games_trained == 1:
+            self.average_think_time = think_time
+        else:
+            total_think_time = think_time + self.average_think_time * (self.total_games_trained - 1)
+            self.average_think_time = total_think_time / self.total_games_trained
 
     def _board_states_to_inputs(self, board_states):
         inputs = np.array(board_states)
         inputs = np.expand_dims(inputs, axis=3)
 
         return inputs
+
+    def _persisting_json_data(self):
+        return {
+            'average_think_time': self.average_think_time,
+            'total_games_trained': self.total_games_trained
+        }
 
     @abstractmethod
     def get_save_file(self):

@@ -35,9 +35,7 @@ class Tournament:
             recent_wins[game.winner] += 1
             for player in self.players:
                 reward = 1 if player.id == game.winner else 0 if game.winner is None else -1
-                player.strategy.game_over(reward)
-                if training:
-                    player.strategy.completed_training_game()
+                player.strategy.game_over(reward, training)
 
             game_number += 1
             if game_number % 5 == 0:
