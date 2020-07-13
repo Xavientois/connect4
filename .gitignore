@@ -8,3 +8,5 @@
 *.backup
 
 log.txt
+saved_models/
+saved_data/

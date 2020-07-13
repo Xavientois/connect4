@@ -9,7 +9,7 @@ class Tournament:
         self.game_count = game_count
         self.players = players
 
-    def run(self, save_on_finish=True, update_handler=None):
+    def run(self, save_on_finish=True, update_handler=None, training=False):
         game_number = 1
         wins = {None:0}
         recent_wins = {None:0}
@@ -35,7 +35,7 @@ class Tournament:
             recent_wins[game.winner] += 1
             for player in self.players:
                 reward = 1 if player.id == game.winner else 0 if game.winner is None else -1
-                player.strategy.game_over(reward)
+                player.strategy.game_over(reward, training)
 
             game_number += 1
             if game_number % 5 == 0:

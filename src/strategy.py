@@ -9,7 +9,7 @@ class Strategy:
         pass
 
     @abstractmethod
-    def game_over(self, reward):
+    def game_over(self, reward, training=False):
         pass
 
     @abstractmethod

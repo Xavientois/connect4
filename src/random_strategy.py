@@ -6,7 +6,7 @@ class RandomStrategy(Strategy):
     def move(self, game, player_id):
         return random.choice(game.board.get_valid_moves())
 
-    def game_over(self, reward):
+    def game_over(self, reward, training=False):
         pass
 
     def save(self):

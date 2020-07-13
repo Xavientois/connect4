@@ -88,9 +88,8 @@ class MctsStrategy(Strategy):
     def get_name(self):
         return 'MC_' + str(self.rollout_limit)
 
-    def game_over(self, reward):
+    def game_over(self, reward, training=False):
         pass
 
     def save(self):
         pass
-

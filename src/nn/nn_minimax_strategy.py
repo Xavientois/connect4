@@ -53,7 +53,7 @@ class NnMiniMaxStrategy(Strategy):
     def _get_other_player(self, player_id):
         return next(p for p in self.player_ids if p != player_id)
 
-    def game_over(self, reward):
+    def game_over(self, reward, training=False):
         pass
 
     def save(self):

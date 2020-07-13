@@ -28,8 +28,8 @@ class NetworkD(Network):
 
         super().__init__(model)
 
-    def get_save_file(self):
-        return 'model_64-4_64-2_64-2_64.h5'
+    def get_save_file(self, extension='h5'):
+        return 'model_64-4_64-2_64-2_64.{}'.format(extension)
 
     def get_name(self):
         return 'D'

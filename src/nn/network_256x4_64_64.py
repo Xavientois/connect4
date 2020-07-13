@@ -26,8 +26,8 @@ class NetworkE(Network):
 
         super().__init__(model)
 
-    def get_save_file(self):
-        return 'model_256-4_64_64.h5'
+    def get_save_file(self, extension='h5'):
+        return 'model_256-4_64_64.{}'.format(extension)
 
     def get_name(self):
         return 'E'
