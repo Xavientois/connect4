@@ -63,7 +63,7 @@ class NnStrategy(Strategy):
             self.current_batch_rewards = []
 
         if training:
-            self.network.training_game_over(self.current_game_think_time)
+            self.network.training_game_over(len(self.current_game_moves), self.current_game_think_time)
 
         self.current_game_think_time = 0.0
         self.current_game_moves = []
@@ -79,6 +79,9 @@ class NnStrategy(Strategy):
 
     def get_average_game_think_time(self):
         return self.network.average_think_time
+
+    def get_total_number_of_moves(self):
+        return self.network.total_number_of_moves
 
     def _build_board_state(self, game, player_id):
         bs = list([list([1 if v == player_id else 0 if v == Board.EMPTY_CELL else -1 for v in row]) for row in game.board.board])

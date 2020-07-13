@@ -11,6 +11,7 @@ class Network(ABC):
     def __init__(self, model):
         self.model = model
         self.total_games_trained = 0
+        self.total_number_of_moves = 0
         self.average_think_time = 0.0
         self.load()
 
@@ -37,6 +38,7 @@ class Network(ABC):
             with open(data_path, 'r') as infile:
                 data = json.loads(infile.read())
                 self.total_games_trained = int(data['total_games_trained'])
+                self.total_number_of_moves = int(data['total_number_of_moves'])
                 self.average_think_time = float(data['average_think_time'])
 
     def save(self):
@@ -51,13 +53,11 @@ class Network(ABC):
         with open(data_path, 'w') as outfile:
             json.dump(self._persisting_json_data(), outfile)
 
-    def training_game_over(self, think_time):
+    def training_game_over(self, number_of_moves, think_time):
+        total_think_time = think_time + self.average_think_time * self.total_number_of_moves
+        self.total_number_of_moves += number_of_moves
+        self.average_think_time = total_think_time / self.total_number_of_moves
         self.total_games_trained += 1
-        if self.total_games_trained == 1:
-            self.average_think_time = think_time
-        else:
-            total_think_time = think_time + self.average_think_time * (self.total_games_trained - 1)
-            self.average_think_time = total_think_time / self.total_games_trained
 
     def _board_states_to_inputs(self, board_states):
         inputs = np.array(board_states)
@@ -68,7 +68,8 @@ class Network(ABC):
     def _persisting_json_data(self):
         return {
             'average_think_time': self.average_think_time,
-            'total_games_trained': self.total_games_trained
+            'total_games_trained': self.total_games_trained,
+            'total_number_of_moves': self.total_number_of_moves
         }
 
     @abstractmethod
