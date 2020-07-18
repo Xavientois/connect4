@@ -113,7 +113,7 @@ def test_ensemble():
 # test_ensemble()
 
 def test_minimax(lookahead_limit):
-    mms = NnMiniMaxStrategy(NetworkBEnsemble('N'), lookahead_limit, ['N', 'X'])
+    mms = NnMiniMaxStrategy(NetworkBEnsemble('N'), lookahead_limit, 'N', 'X')
     p1 = Player('N', mms)
     p2 = Player('X', MctsStrategy(1000))
     tournament = Tournament(100, [p2, p1])
