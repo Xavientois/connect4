@@ -7,7 +7,7 @@ class NetworkBEnsemble(Network):
 
         super().__init__(EnsembleModel(3))
 
-    def get_save_file(self):
+    def get_save_file(self, extension=''):
         return 'does not exist'
 
     def get_name(self):

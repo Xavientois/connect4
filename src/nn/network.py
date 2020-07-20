@@ -73,7 +73,7 @@ class Network(ABC):
         }
 
     @abstractmethod
-    def get_save_file(self):
+    def get_save_file(self, extension):
         pass
 
     @abstractmethod
