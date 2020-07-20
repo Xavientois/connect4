@@ -27,6 +27,7 @@ self_play_batch_size=5000
 benchmark_batch_size=10
 training_rounds=1000
 mirroring=False
+alpha_beta_pruning=False
 
 def get_exploration_factor(game_number):
     # return 0.1 * math.pow(1 - 0.000002, game_number)
@@ -103,6 +104,7 @@ def self_play_group(count):
 
 # self_play_group(3)
 
+
 def test_ensemble():
     p1 = Player('N', NnStrategy(NetworkBEnsemble('N'), mirroring))
     p2 = Player('X', MctsStrategy(1000))
@@ -112,8 +114,9 @@ def test_ensemble():
 
 # test_ensemble()
 
+
 def test_minimax(lookahead_limit):
-    mms = NnMiniMaxStrategy(NetworkBEnsemble('N'), lookahead_limit, 'N', 'X')
+    mms = NnMiniMaxStrategy(NetworkBEnsemble('N'), lookahead_limit, 'N', 'X', alpha_beta_pruning)
     p1 = Player('N', mms)
     p2 = Player('X', MctsStrategy(1000))
     tournament = Tournament(100, [p2, p1])
@@ -121,5 +124,6 @@ def test_minimax(lookahead_limit):
     print(' ')
     print(lookahead_limit, result, mms.average_move_time(),flush=True)
 
+
 self_play_group(3)
-[test_minimax(n) for n in range(0,3)]
+[test_minimax(n) for n in range(0,5)]
